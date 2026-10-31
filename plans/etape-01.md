@@ -77,6 +77,8 @@ Fait avancer la vitesse de `dtS` secondes (méthode d'Euler) :
 
 ## Tests à écrire dans `test/physics.test.js`
 
+Toutes les valeurs ci-dessous sont déjà calculées et vérifiées. Ne les recalcule pas : recopie-les, puis lance `npm test`.
+
 Utiliser `node:test` et `node:assert/strict`, avec cet utilitaire :
 
 ```js

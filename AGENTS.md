@@ -31,6 +31,7 @@ Ne lis pas `docs/roadmap.md` ni `docs/methode-architecte.md`, et ne charge que l
 8. Ne fais ni `git commit` ni `git push` sans demande explicite.
 9. Si le plan est ambigu ou semble faux, arrête-toi et pose la question. N'invente pas.
 10. Ne modifie jamais une valeur attendue dans un test pour le faire passer.
+    Ces valeurs sont déjà vérifiées : ne les recalcule jamais toi-même, `npm test` s'en charge.
 11. Termine toujours en disant à l'utilisateur comment tester l'étape, avec les commandes et le résultat attendu.
 
 ## Lancer les tests

@@ -19,6 +19,18 @@ Tu es l'architecte de Zwift Bis (Claude). Tu conçois et tu relis. Tu n'écris *
 7. **Rédiger** `plans/etape-(N+1).md`, et uniquement celui-ci.
 8. **Terminer** par ce qu'il faut retenir de l'étape, puis le prompt exact à envoyer à Pi.
 
+## Mode automatique (étapes sans matériel)
+
+Sur demande de l'utilisateur, l'architecte enchaîne les étapes en lançant Pi lui-même avec `pi -p`, en arrière-plan.
+
+1. Relire l'étape terminée, faire un commit local, écrire le plan suivant.
+2. Lancer une session Pi pour le code, puis une session neuve pour les tests : la réflexion de Qwen reste dans son contexte de 32k, qu'une seule session remplirait (étape 1 : 28 700 tokens en entrée, plus de place pour répondre).
+3. Ne jamais se fier au message de fin de Pi : vérifier les fichiers et lancer `npm test`. Si Pi est coupé, relancer une session neuve qui repart des fichiers écrits.
+4. Deux correctifs au maximum par défaut. Au-delà, s'arrêter et noter le problème.
+5. Ne jamais réduire le raisonnement de Qwen. Si le contexte manque, découper.
+6. Ne jamais pousser. S'arrêter avant l'étape 11 : elle exige l'accord de publication et le vrai matériel.
+7. Les explications destinées à l'utilisateur figurent dans le compte rendu de l'architecte et dans les commentaires du code.
+
 ## Format obligatoire d'un plan
 
 Reprendre la structure de `plans/etape-01.md` :
@@ -35,6 +47,7 @@ Reprendre la structure de `plans/etape-01.md` :
 
 - **Autonomie** : le plan doit se suffire à lui-même. Pi ne lit pas le cahier des charges. Recopier les faits nécessaires (octets, formats) plutôt que renvoyer vers un autre document.
 - **Valeurs calculées, pas estimées** : exécuter une implémentation de référence dans le scratchpad (jamais dans le projet) pour obtenir les valeurs attendues, et vérifier que le plan passe avant de le livrer.
+- **Pas de recalcul par Pi** : rappeler dans chaque plan que les valeurs attendues sont vérifiées et à recopier. À l'étape 1, Qwen a épuisé sa limite de sortie en les recalculant à la main.
 - **Longueur** : viser moins de 2 500 mots. Si le plan déborde ou touche plus de 3 fichiers, découper l'étape.
 - **Interfaces** : rappeler uniquement les signatures des modules existants dont l'étape a besoin, relevées dans le code réel.
 - **Vérification** : consulter les sources officielles sur tout point technique incertain, et les citer dans `docs/architecture.md`. Dire clairement ce qui n'a pas pu être vérifié.

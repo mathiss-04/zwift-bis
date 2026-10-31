@@ -117,6 +117,7 @@ Cardio (optionnelle) ───────────> FC ───────
 | Licence Ouverte 2.0 | Réutilisation gratuite avec mention de la source, affichée dans l'app. |
 | Dépôt public, GitHub Pages | Gratuit en HTTPS, ce qu'exige Web Bluetooth. |
 | Auuki comme simple référence | Il est sous AGPL-3.0 : on s'en inspire pour comprendre, on ne copie pas son code. |
+| Six zones de puissance façon Zwift (limites hautes 60, 76, 90, 105 et 119 % de la FTP) | Couleurs déjà familières sur ce type d'app. Limites reprises de mémoire, à confirmer par l'utilisateur. |
 | Rampes .zwo de `PowerLow` vers `PowerHigh` | D'après la référence communautaire (Zwift ne publie pas de spécification). Le sens des Cooldown sera vérifié sur de vrais fichiers. |
 
 ## Sources
