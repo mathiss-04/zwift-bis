@@ -1,0 +1,27 @@
+# macOS / Windows
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node (outils de développement uniquement, jamais publiés)
+node_modules/
+npm-debug.log*
+.npm/
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# Données brutes de préparation des parcours
+# (GPX d'origine et téléchargements IGN : seuls les fichiers de routes/ sont publiés)
+data/raw/
+*.gpx
+
+# Fichiers d'activité exportés et fichiers temporaires
+*.fit
+*.tmp
+*.log
+
+# Réglages locaux de Claude Code
+.claude/settings.local.json
