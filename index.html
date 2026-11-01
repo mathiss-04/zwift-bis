@@ -8,7 +8,10 @@
   <style>
     body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
     input[type="range"] { width: 100%; }
+    button { font: inherit; padding: 0.5rem 1rem; }
     #power-value { font-weight: 600; }
+    #hub-status { font-weight: 600; }
+    #hub-frames { min-height: 1.5rem; font-size: 0.85rem; overflow-x: auto; }
     #hud { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
     #hud div { display: flex; flex-direction: column; }
     #hud span { font-size: 0.85rem; }
@@ -17,6 +20,8 @@
 </head>
 <body>
   <h1>Zwift Bis</h1>
+  <p><button id="hub-connect" type="button">Connecter le Hub</button></p>
+  <p id="hub-status"></p>
   <label for="power">Puissance du simulateur : <span id="power-value"></span></label>
   <input id="power" type="range" min="0" max="600" step="5" value="200">
   <section id="hud">
@@ -27,16 +32,22 @@
     <div><span>Temps</span><output id="hud-time"></output></div>
     <div><span>Pente</span><output id="hud-grade"></output></div>
   </section>
+  <h2>Trames brutes du Hub</h2>
+  <pre id="hub-frames"></pre>
   <script type="module">
     import { createParams } from './src/core/physics.js';
     import { createSimulator } from './src/devices/simulator.js';
+    import { createFtmsTrainer } from './src/devices/ftms.js';
     import { createHud } from './src/ui/hud.js';
+    import { createPairing } from './src/ui/pairing.js';
     import { createApp, createFlatRoute } from './src/app.js';
 
     const byId = (id) => document.getElementById(id);
     const sim = createSimulator();
+    const hub = createFtmsTrainer({ bluetooth: navigator.bluetooth });
     const slider = byId('power');
 
+    // La puissance demandée au simulateur : valeur du curseur, en watts.
     function applyPower() {
       const watts = Number(slider.value);
       byId('power-value').textContent = `${watts} W`;
@@ -53,13 +64,37 @@
       time: byId('hud-time'),
       grade: byId('hud-grade'),
     });
-    const app = createApp({
-      trainer: sim,
+    // Deux applications, un seul HUD : chacune avec son propre trainer.
+    const makeApp = (trainer) => createApp({
+      trainer,
       route: createFlatRoute(),
       params: createParams(75, 8), // cycliste 75 kg, vélo 8 kg
       hud,
     });
-    app.start();
+    const simApp = makeApp(sim);
+    const hubApp = makeApp(hub);
+
+    createPairing({
+      elements: {
+        connect: byId('hub-connect'),
+        status: byId('hub-status'),
+        frames: byId('hub-frames'),
+      },
+      trainer: hub,
+      // Le navigateur n'ouvre la fenêtre Bluetooth qu'à la suite d'un clic.
+      async onConnect() {
+        await simApp.stop();
+        await hubApp.stop();
+        slider.disabled = true; // le Hub prend la main, le curseur n'est plus utile
+        await hubApp.start();
+      },
+      // Échec : on revient au simulateur.
+      async onError() {
+        slider.disabled = false;
+        await simApp.start();
+      },
+    });
+    simApp.start();
   </script>
 </body>
 </html>

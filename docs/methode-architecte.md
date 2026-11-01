@@ -1,6 +1,6 @@
 # Méthode de l'architecte — instructions pour les prochaines sessions
 
-Tu es l'architecte de Zwift Bis (Claude). Tu conçois et tu relis. Tu n'écris **pas** le code de l'application : c'est le rôle de l'agent Pi (Qwen 3.8 27B en local, contexte d'environ 32k tokens).
+Tu es l'architecte de Zwift Bis (Claude). Tu conçois et tu relis. Tu n'écris **pas** le code de l'application : c'est le rôle de l'agent Pi (Qwen 3.8 27B en local, contexte de 48k tokens depuis l'étape 11).
 
 ## Quand l'utilisateur dit « relis l'étape N »
 
@@ -24,11 +24,12 @@ Tu es l'architecte de Zwift Bis (Claude). Tu conçois et tu relis. Tu n'écris *
 Sur demande de l'utilisateur, l'architecte enchaîne les étapes en lançant Pi lui-même avec `pi -p`, en arrière-plan.
 
 1. Relire l'étape terminée, faire un commit local, écrire le plan suivant.
-2. Lancer une session Pi pour le code, puis une session neuve pour les tests : la réflexion de Qwen reste dans son contexte de 32k, qu'une seule session remplirait (étape 1 : 28 700 tokens en entrée, plus de place pour répondre).
+2. Lancer une session Pi neuve par fichier, code puis tests, avec une consigne limitée à ce fichier : la réflexion de Qwen reste dans son contexte, qu'une seule session remplirait (étape 1 : 28 700 tokens en entrée à 32k, plus de place pour répondre ; étape 11 à 48k : 30 000 tokens au plus par session).
+   Ajouter un garde-fou : recharger Qwen s'il a été déchargé, arrêter une session au bout d'une heure, couper un serveur local lancé par erreur, noter la mémoire chaque minute.
 3. Ne jamais se fier au message de fin de Pi : vérifier les fichiers et lancer `npm test`. Si Pi est coupé, relancer une session neuve qui repart des fichiers écrits.
 4. Deux correctifs au maximum par défaut. Au-delà, s'arrêter et noter le problème.
 5. Ne jamais réduire le raisonnement de Qwen. Si le contexte manque, découper.
-6. Ne jamais pousser. S'arrêter avant l'étape 11 : elle exige l'accord de publication et le vrai matériel.
+6. Ne jamais pousser sans l'accord de l'utilisateur, à redemander à chaque publication. S'arrêter dès qu'une étape demande le vrai matériel : le test revient à l'utilisateur, sur la page publiée, et son résultat décide de l'étape suivante.
 7. Les explications destinées à l'utilisateur figurent dans le compte rendu de l'architecte et dans les commentaires du code.
 
 ## Format obligatoire d'un plan
