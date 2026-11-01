@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zwift Bis</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
+    input[type="range"] { width: 100%; }
+    #power-value { font-size: 2rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Zwift Bis</h1>
+  <label for="power">Puissance du simulateur</label>
+  <input id="power" type="range" min="0" max="600" step="5" value="200">
+  <p id="power-value"></p>
+  <p id="sim-data">Simulateur : en attente</p>
+  <script type="module">
+    import { createSimulator } from './src/devices/simulator.js';
+
+    const sim = createSimulator();
+    const slider = document.getElementById('power');
+    const value = document.getElementById('power-value');
+    const data = document.getElementById('sim-data');
+
+    function applyPower() {
+      const watts = Number(slider.value);
+      value.textContent = `${watts} W`;
+      sim.setPower(watts);
+    }
+
+    slider.addEventListener('input', applyPower);
+    sim.onData(({ powerW, cadenceRpm }) => {
+      data.textContent = `Simulateur : ${powerW} W, ${cadenceRpm} tr/min`;
+    });
+    applyPower();
+    sim.connect();
+  </script>
+</body>
+</html>
