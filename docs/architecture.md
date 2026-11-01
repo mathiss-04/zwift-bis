@@ -68,13 +68,12 @@ Cardio (optionnelle) ───────────> FC ───────
 - **Séquence** : activer les indications, `0x00` Request Control, `0x07` Start, puis les commandes. À refaire après chaque reconnexion, avec la dernière consigne.
 - **Commandes** (petit-boutiste) : `0x05` Target Power = sint16, 1 W. `0x11` Simulation = vent sint16 (0,001 m/s), pente sint16 (0,01 %), Crr uint8 (0,0001), Cw uint8 (0,01 kg/m). `0x08` Stop/Pause = `0x01` stop, `0x02` pause.
 - **Réponse** : `0x80`, opcode demandé, résultat (`0x01` succès, `0x02` non supporté, `0x03` paramètre invalide, `0x04` échec, `0x05` non permis). Une seule écriture à la fois : file d'attente où la dernière consigne remplace les précédentes.
-- **Indoor Bike Data** : flags uint16, puis dans l'ordre : bit 0 **inversé** (à 0 : vitesse uint16, 0,01 km/h), bit 1 vitesse moyenne, bit 2 cadence uint16 (0,5 tr/min), bit 3 cadence moyenne, bit 4 distance uint24, bit 5 résistance, bit 6 puissance sint16 (1 W), bit 7 puissance moyenne, bit 8 énergie (5 octets), bit 9 FC, bit 10 MET, bit 11 et 12 temps. Une mesure peut arriver en plusieurs notifications : on ne met à jour que les champs présents.
+- **Indoor Bike Data** : flags uint16, puis dans l'ordre : bit 0 **inversé** (à 0 : vitesse uint16, 0,01 km/h), bit 1 vitesse moyenne, bit 2 cadence uint16 (0,5 tr/min), bit 3 cadence moyenne, bit 4 distance uint24, bit 5 résistance (2 octets, vérifié sur une trame du Hub, malgré le uint8 du schéma Bluetooth SIG), bit 6 puissance sint16 (1 W), bit 7 puissance moyenne, bit 8 énergie (5 octets), bit 9 FC, bit 10 MET, bit 11 et 12 temps. Une mesure peut arriver en plusieurs notifications : on ne met à jour que les champs présents.
 - **Cardio** `0x180D`, mesure `0x2A37` : flags uint8 ; bit 0 à 0 → FC uint8, à 1 → uint16 ; bit 3 énergie ; bit 4 intervalles RR.
 
 **Points ouverts, à trancher sur le vrai Hub :**
-1. Taille du champ Resistance Level : uint8 d'après le schéma Bluetooth SIG, 2 octets dans Auuki. Si le bit 5 est actif, cela décale la puissance. L'étape FTMS affiche donc les trames brutes.
-2. Je n'ai trouvé aucune source sur le comportement du Hub One en simulation de pente pilotée par une app tierce (l'ERG est confirmé). D'où un test réel dès les étapes 10-11, avant la 3D.
-3. Le Hub mesure peut-être la puissance après la chaîne. Dans ce cas, le rendement η compterait les pertes deux fois. Valeur à revoir une fois sur le matériel.
+1. Je n'ai trouvé aucune source sur le comportement du Hub One en simulation de pente pilotée par une app tierce (l'ERG est confirmé). D'où un test réel dès les étapes 10-11, avant la 3D.
+2. Le Hub mesure peut-être la puissance après la chaîne. Dans ce cas, le rendement η compterait les pertes deux fois. Valeur à revoir une fois sur le matériel.
 
 ## Parcours préparé
 

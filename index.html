@@ -44,7 +44,8 @@
 
     const byId = (id) => document.getElementById(id);
     const sim = createSimulator();
-    const hub = createFtmsTrainer({ bluetooth: navigator.bluetooth });
+    // Le vrai Hub envoie la résistance sur 2 octets (vérifié sur une trame réelle).
+    const hub = createFtmsTrainer({ bluetooth: navigator.bluetooth, resistanceBytes: 2 });
     const slider = byId('power');
 
     // La puissance demandée au simulateur : valeur du curseur, en watts.

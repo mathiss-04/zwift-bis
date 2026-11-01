@@ -32,8 +32,7 @@ export function frameToHex(dataView) {
  * `bluetooth` : API Web Bluetooth (navigator.bluetooth), injectée par le
  * paramètre pour pouvoir être remplacée par un faux dans les tests.
  * `resistanceBytes` : taille du champ résistance dans les trames (1 ou 2
- * octets). Les documents se contredisent ; la valeur sera tranchée avec
- * le vrai matériel à cette étape.
+ * octets). Le vrai Hub en envoie 2 : index.html passe cette valeur.
  *
  * Interface renvoyée (identique au simulateur) :
  * connect, disconnect, onData, onRaw, onStatus.

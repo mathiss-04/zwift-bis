@@ -84,7 +84,7 @@ export function encodeSimulation(gradePct, { windMs = 0, crr = 0.004, cw = 0.51 
  * le champ est présent quand ce bit vaut 0.
  *
  * `resistanceBytes` : taille du champ résistance (1 ou 2 octets).
- * Les documents se contredisent ; la bonne valeur sera tranchée à l'étape 11.
+ * Le vrai Hub en envoie 2 : c'est l'appelant qui choisit cette valeur.
  *
  * Si la trame est tronquée (pas assez d'octets pour un champ annoncé),
  * `truncated` passe à true et l'on renvoie ce qui a déjà été lu, sans erreur.

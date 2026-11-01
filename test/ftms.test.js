@@ -200,3 +200,17 @@ test('sans Bluetooth : NotSupportedError et aucun statut', async () => {
   await assert.rejects(trainer.connect(), { name: 'NotSupportedError' });
   assert.deepEqual(status, []);
 });
+
+// --- Trames du vrai Hub ---
+
+test('vrai Hub : résistance sur 2 octets, puissance lue sans décalage', async () => {
+  const bluetooth = fakeBluetooth();
+  const trainer = createFtmsTrainer({ bluetooth, resistanceBytes: 2 });
+  const data = [];
+  trainer.onData((d) => data.push(d));
+  await trainer.connect();
+  const c = bluetooth.devices[0].ch;
+  c.send([0x64, 2, 0, 0, 0, 0, 0x14, 0, 0, 0, 0]); // trame réelle, à l'arrêt
+  c.send([0x64, 2, 0, 0, 0, 0, 0x14, 0, 0x1B, 0, 0]); // même trame avec 27 W
+  assert.deepEqual(data, [{ powerW: 0, cadenceRpm: 0 }, { powerW: 27, cadenceRpm: 0 }]);
+});
