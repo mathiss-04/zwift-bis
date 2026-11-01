@@ -8,35 +8,58 @@
   <style>
     body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
     input[type="range"] { width: 100%; }
-    #power-value { font-size: 2rem; font-weight: 600; }
+    #power-value { font-weight: 600; }
+    #hud { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+    #hud div { display: flex; flex-direction: column; }
+    #hud span { font-size: 0.85rem; }
+    #hud output { font-size: 1.75rem; font-weight: 600; }
   </style>
 </head>
 <body>
   <h1>Zwift Bis</h1>
-  <label for="power">Puissance du simulateur</label>
+  <label for="power">Puissance du simulateur : <span id="power-value"></span></label>
   <input id="power" type="range" min="0" max="600" step="5" value="200">
-  <p id="power-value"></p>
-  <p id="sim-data">Simulateur : en attente</p>
+  <section id="hud">
+    <div><span>Vitesse</span><output id="hud-speed"></output></div>
+    <div><span>Puissance</span><output id="hud-power"></output></div>
+    <div><span>Cadence</span><output id="hud-cadence"></output></div>
+    <div><span>Distance</span><output id="hud-distance"></output></div>
+    <div><span>Temps</span><output id="hud-time"></output></div>
+    <div><span>Pente</span><output id="hud-grade"></output></div>
+  </section>
   <script type="module">
+    import { createParams } from './src/core/physics.js';
     import { createSimulator } from './src/devices/simulator.js';
+    import { createHud } from './src/ui/hud.js';
+    import { createApp, createFlatRoute } from './src/app.js';
 
+    const byId = (id) => document.getElementById(id);
     const sim = createSimulator();
-    const slider = document.getElementById('power');
-    const value = document.getElementById('power-value');
-    const data = document.getElementById('sim-data');
+    const slider = byId('power');
 
     function applyPower() {
       const watts = Number(slider.value);
-      value.textContent = `${watts} W`;
+      byId('power-value').textContent = `${watts} W`;
       sim.setPower(watts);
     }
-
     slider.addEventListener('input', applyPower);
-    sim.onData(({ powerW, cadenceRpm }) => {
-      data.textContent = `Simulateur : ${powerW} W, ${cadenceRpm} tr/min`;
-    });
     applyPower();
-    sim.connect();
+
+    const hud = createHud({
+      speed: byId('hud-speed'),
+      power: byId('hud-power'),
+      cadence: byId('hud-cadence'),
+      distance: byId('hud-distance'),
+      time: byId('hud-time'),
+      grade: byId('hud-grade'),
+    });
+    const app = createApp({
+      trainer: sim,
+      route: createFlatRoute(),
+      params: createParams(75, 8), // cycliste 75 kg, vélo 8 kg
+      hud,
+    });
+    app.start();
   </script>
 </body>
 </html>
